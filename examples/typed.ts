@@ -1,5 +1,3 @@
-/// <reference types="node" />
-
 import Emitter from '../';
 
 type EventType = 'value' | 'end' | 'error';
