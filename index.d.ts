@@ -7,7 +7,7 @@ export = Emittery;
 /**
  * Simple and modern async event emitter
  *
- * @template T - Type of the event name.
+ * @template T - An union of literal event name.
  */
 declare class Emittery<T extends string> {
 
