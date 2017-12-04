@@ -13,14 +13,17 @@
 		"node": ">=4"
 	},
 	"scripts": {
-		"build": "babel --out-file=legacy.js index.js",
-		"build:watch": "npm run build -- --watch",
+		"build": "npm run build:legacy && cp index.d.ts legacy.d.ts",
+		"build:legacy": "babel --out-file=legacy.js index.js",
+		"build:watch": "npm run build:legacy -- --watch",
 		"prepublish": "npm run build",
 		"test": "xo && nyc ava"
 	},
 	"files": [
 		"index.js",
-		"legacy.js"
+		"index.d.ts",
+		"legacy.js",
+		"legacy.d.ts"
 	],
 	"keywords": [
 		"event",
