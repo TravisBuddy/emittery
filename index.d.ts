@@ -17,9 +17,6 @@ declare class Emittery<T extends string> {
 		 * Using the same listener multiple times for the same event will result
 		 * in only one method call per emitted event.
 		 *
-		 * @template U
-		 * @param eventName
-		 * @param listener
 		 * @returns Unsubscribe method.
 		 */
 		on<U>(eventName: T, listener: (eventData: U) => any): () => void;
@@ -28,8 +25,6 @@ declare class Emittery<T extends string> {
 		 * Subscribe to an event only once. It will be unsubscribed after the first
 		 * event.
 		 *
-		 * @template U
-		 * @param eventName
 		 * @returns Promise for the event data when eventName is emitted
 		 */
 		once<U>(eventName: T): Promise<U>;
@@ -47,8 +42,6 @@ declare class Emittery<T extends string> {
 		/**
 		 * Subscribe to be notified about any event.
 		 *
-		 * @template U
-		 * @param listener
 		 * @returns A method to unsubscribe
 		 */
 		onAny(listener: (eventName: T, eventData: any) => any): () => void;
@@ -72,10 +65,7 @@ declare class Emittery<T extends string> {
 		 * returned promise will be rejected with the error, but the other listeners
 		 * will not be affected.
 		 *
-		 * @template U
-		 * @param eventName
-		 * @param [eventData]
-		 * @returns a promise for when all the event listeners are done.
+		 * @returns A promise for when all the event listeners are done.
 		 */
 		emit<U>(eventName: T, eventData?: U): Promise<void>;
 
@@ -87,10 +77,7 @@ declare class Emittery<T extends string> {
 		 * If any of the listeners throw/reject, the returned promise will be
 		 * rejected with the error and the remaining listeners will not be called.
 		 *
-		 * @template U
-		 * @param eventName
-		 * @param [eventData]
-		 * @returns a promise for the last event listener settle or first one rejecting.
+		 * @returns A promise for the last event listener settle or first one rejecting.
 		 */
 		emitSerial<U>(eventName: T, eventData?: U): Promise<void>;
 
