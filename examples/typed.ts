@@ -1,18 +1,24 @@
 import Emitter from '../';
 
-type EventType = 'value' | 'end' | 'error';
+interface Events {
+	value: {
+		msg: string;
+		data?: any[];
+		ts: number;
+	};
 
-interface IRecord {
-	msg: string;
-	data?: any[];
-	ts: number;
+	error: Error;
 }
 
-class Logger extends Emitter<EventType> {
+class Logger extends Emitter<Events, {end: true}> {
 
 	log(msg: string, ...data: any[]) {
-		this.emit<IRecord>('value', {msg, data, ts: Date.now()});
+		this.emit('value', {msg, data, ts: Date.now()});
 		console.log(msg, ...data);
+	}
+
+	end() {
+		this.emit('end');
 	}
 }
 
@@ -26,11 +32,15 @@ logger.emitSerial('end');
 
 
 // Register our listeners
-const off = logger.on<IRecord>('value', rec => console.log(`data: ${rec.data}, ts: ${rec.ts}`));
+const off = logger.on('value', rec => console.log(`data: ${rec.data}, ts: ${rec.ts}`));
 
-logger.onAny((name: string, data: any) => console.log('Event %d. Called with %d', name, data));
+logger.onAny((name, data) => console.log('Event %d. Called with %d', name, data));
 
-logger.once('end').then(() => {
+logger.once('error').then(error => {
+	console.error(error.name)
+})
+
+logger.once('end').then(dataIsVoid => {
 	// Unsubscribe methods
 	off();               // unsubscribe handler
 	logger.off('value'); // unsubscribe method for all listener of the 'value' event.

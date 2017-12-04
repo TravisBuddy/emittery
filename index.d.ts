@@ -2,14 +2,12 @@
 // Project: emittery
 // Definitions by: Sindre Sorhus <sindresorhus.com>
 
-export = Emittery;
-
 /**
  * Simple and modern async event emitter
  *
  * @template T - An union of literal event name.
  */
-declare class Emittery<T extends string> {
+declare class Emittery<Mapped = {[eventName: string]: any}, EventOnly = Mapped> {
 
 		/**
 		 * Subscribe to an event.
@@ -19,7 +17,8 @@ declare class Emittery<T extends string> {
 		 *
 		 * @returns Unsubscribe method.
 		 */
-		on<U>(eventName: T, listener: (eventData: U) => any): () => void;
+		on<Name extends keyof Mapped>(eventName: Name, listener: (eventData: Mapped[Name]) => any): () => void;
+		on<Name extends keyof EventOnly>(eventName: Name, listener: () => any): () => void;
 
 		/**
 		 * Subscribe to an event only once. It will be unsubscribed after the first
@@ -27,7 +26,8 @@ declare class Emittery<T extends string> {
 		 *
 		 * @returns Promise for the event data when eventName is emitted
 		 */
-		once<U>(eventName: T): Promise<U>;
+		once<Name extends keyof Mapped>(eventName: Name): Promise<Mapped[Name]>;
+		once<Name extends keyof EventOnly>(eventName: Name): Promise<void>;
 
 		/**
 		 * Unsubscribe to an event.
@@ -37,14 +37,16 @@ declare class Emittery<T extends string> {
 		 *
 		 * @param [listener]
 		 */
-		off(eventName: T, listener?: (x: any) => any): void;
+		off<Name extends keyof Mapped>(eventName: Name, listener?: (eventData: Mapped[Name]) => any): void;
+		off<Name extends keyof EventOnly>(eventName: Name, listener?: () => any): void;
 
 		/**
 		 * Subscribe to be notified about any event.
 		 *
 		 * @returns A method to unsubscribe
 		 */
-		onAny(listener: (eventName: T, eventData: any) => any): () => void;
+		onAny<Name extends keyof Mapped>(listener: (eventName: Name, eventData: Mapped[Name]) => any): () => void;
+		onAny<Name extends keyof EventOnly>(listener: (eventName: Name) => any): () => void;
 
 		/**
 		 * Unsubscribe an onAny listener.
@@ -53,7 +55,8 @@ declare class Emittery<T extends string> {
 		 *
 		 * @param [listener]
 		 */
-		offAny(listener?: (eventName: T, eventData: any) => any): void;
+		offAny<Name extends keyof Mapped>(listener?: (eventName: Name, eventData: Mapped[Name]) => any): void;
+		offAny<Name extends keyof EventOnly>(listener?: (eventName: Name) => any): void;
 
 		/**
 		 * Trigger an event asynchronously, optionally with some data. Listeners
@@ -68,7 +71,8 @@ declare class Emittery<T extends string> {
 		 *
 		 * @returns A promise for when all the event listeners are done.
 		 */
-		emit<U>(eventName: T, eventData?: U): Promise<void>;
+		emit<Name extends keyof Mapped>(eventName: Name, eventData: Mapped[Name]): Promise<void>;
+		emit<Name extends keyof EventOnly>(eventName: Name): Promise<void>;
 
 		/**
 		 * Same as `emit`, but it waits for each listener to resolve before
@@ -80,7 +84,8 @@ declare class Emittery<T extends string> {
 		 *
 		 * @returns A promise for the last event listener settle or first one rejecting.
 		 */
-		emitSerial<U>(eventName: T, eventData?: U): Promise<void>;
+		emitSerial<Name extends keyof Mapped>(eventName: Name, eventData: Mapped[Name]): Promise<void>;
+		emitSerial<Name extends keyof EventOnly>(eventName: Name): Promise<void>;
 
 		/**
 		 * Clear all event listeners on the instance.
@@ -93,5 +98,7 @@ declare class Emittery<T extends string> {
 		 * @param eventName
 		 * @returns Listener count.
 		 */
-		listenerCount(eventName?: T): number;
+		listenerCount<Name extends (keyof Mapped | keyof EventOnly)>(eventName?: Name): number;
 }
+
+export default Emittery;
