@@ -35,7 +35,7 @@ declare class Emittery<T extends string> {
 		 * If you don't pass in a listener, it will remove all listeners for that
 		 * event.
 		 *
-		 * @param eventName
+		 * @param [listener]
 		 */
 		off(eventName: T, listener?: (x: any) => any): void;
 
@@ -51,8 +51,9 @@ declare class Emittery<T extends string> {
 		 *
 		 * If you don't pass in a listener, it will remove all onAny listeners.
 		 *
+		 * @param [listener]
 		 */
-		offAny(listener: (eventName: T, eventData: any) => any): void;
+		offAny(listener?: (eventName: T, eventData: any) => any): void;
 
 		/**
 		 * Trigger an event asynchronously, optionally with some data. Listeners
